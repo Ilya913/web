@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Главная страница</title>
+    <style>
+        .pagination {
+            text-align: center;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Список книг</h1>
+    <a href="{% url 'add_book' %}">Добавить новую книгу</a>
+
+    <form method="get" action="">
+        <label for="per_page">Книг на странице</label>
+        <select name="per_page" id="per_page" onchange="this.form.submit()">
+            <option value="1" {% if books.paginator.per_page == 1 %}selected{% endif %}>1</option>
+            <option value="2" {% if books.paginator.per_page == 2 %}selected{% endif %}>2</option>
+            <option value="3" {% if books.paginator.per_page == 3 %}selected{% endif %}>3</option>
+            <option value="4" {% if books.paginator.per_page == 4 %}selected{% endif %}>4</option>
+            <option value="5" {% if books.paginator.per_page == 5 %}selected{% endif %}>5</option>
+        </select>
+    </form>
+    <ul>
+        {% for book in books %}
+            <li>
+                <strong>{{ book.name_book }}</strong> ({{ book.price_book }}) <br>
+                <small>{{ book.author_book }}</small> <br>
+                <a href="{% url 'edit_book' book.id_book %}">Изменить информацию о книге</a> <br>
+                <a href="{% url 'delete_book' book.id_book %}">Удалить книгу</a>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <div class="pagination">
+        <span class="step-links">
+            {% if books.has_previous %}
+                <a href="?page=1&per_page={{ books.paginator.per_page}}">первая</a>
+            {% endif %}
+
+            {% for num in books.paginator.page_range %}
+                {% if books.number == num %}
+                    <span>{{ num }}</span>
+                {% else %}
+                    <a href="?page={{ num }}&per_page={{ books.paginator.per_page }}">{{ num }}</a>
+                {% endif %}
+            {% endfor %}
+
+            {% if books.has_next %}
+                <a href="?page={{ books.paginator.num_pages }}&per_page={{ books.paginator.per_page }}">последняя</a>
+            {% endif %}
+        </span>
+    </div>
+</body>
+</html>
+
