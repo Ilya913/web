@@ -14,8 +14,22 @@
     </style>
 </head>
 <body>
+    {% if user.is_authenticated %}
+        <div style="float: right;">
+            Вы вошли как <strong>{{ user.username }}({{ user.role }})</strong><br>
+            <a href="{% url 'logout' %}">Выйти</a>
+        </div>
+    {% else %}
+        <div style="float: right;">
+            <a href="{% url 'login' %}">Войти</a>
+            <a href="{% url 'register' %}">Зарегистрироваться</a>
+        </div>
+    {% endif %}
+
     <h1>Список книг</h1>
-    <a href="{% url 'add_book' %}">Добавить новую книгу</a>
+    {% if user.is_authenticated %}
+        <a href="{% url 'echo:add_book' %}">Добавить новую книгу</a>
+    {% endif %}
 
     <form method="get" action="">
         <label for="per_page">Книг на странице</label>
@@ -32,8 +46,10 @@
             <li>
                 <strong>{{ book.name_book }}</strong> ({{ book.price_book }}) <br>
                 <small>{{ book.author_book }}</small> <br>
-                <a href="{% url 'edit_book' book.id_book %}">Изменить информацию о книге</a> <br>
-                <a href="{% url 'delete_book' book.id_book %}">Удалить книгу</a>
+                {% if user.is_authenticated and user.is_admin %}
+                    <a href="{% url 'echo:edit_book' book.id_book %}">Изменить информацию о книге</a> <br>
+                    <a href="{% url 'echo:delete_book' book.id_book %}">Удалить книгу</a>
+                {% endif %}
             </li>
         {% endfor %}
     </ul>
