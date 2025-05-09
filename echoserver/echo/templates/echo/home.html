@@ -14,10 +14,19 @@
     </style>
 </head>
 <body>
+    {% if messages %}
+    <div class="alert alert-success mt-3">
+        {% for message in messages %}
+            {{ message }}
+        {% endfor %}
+    </div>
+    {% endif %}
     {% if user.is_authenticated %}
         <div style="float: right;">
             Вы вошли как <strong>{{ user.username }}({{ user.role }})</strong><br>
+            <a href="{% url 'profile'%}">Профиль</a>
             <a href="{% url 'logout' %}">Выйти</a>
+            <a href="{% url 'cart' %}">Корзина</a>
         </div>
     {% else %}
         <div style="float: right;">
@@ -49,6 +58,9 @@
                 {% if user.is_authenticated and user.is_admin %}
                     <a href="{% url 'echo:edit_book' book.id_book %}">Изменить информацию о книге</a> <br>
                     <a href="{% url 'echo:delete_book' book.id_book %}">Удалить книгу</a>
+                {% endif %}
+                {% if user.is_authenticated %}
+                    <a href="{% url 'add_to_cart' book.id_book %}">Добавить в корзину</a>
                 {% endif %}
             </li>
         {% endfor %}

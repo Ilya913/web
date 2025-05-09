@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title%}Профиль{% endblock %}
+
+{% block content %}
+<h2>Профиль</h2>
+<a href="{% url 'echo:home'%}", class="btn btn-secondary">
+  Вернуться на главную страницу
+</a>
+<a href="{% url 'order_detail'%}", class="btn btn-secondary">
+  Мои заказы
+</a>
+{% if messages %}
+<div class="alert alert-success mt-3">
+    {% for message in messages %}
+        {{ message }}
+    {% endfor %}
+</div>
+
+{% endif %}
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary btn-block">Сохранить изменения</button>
+</form>
+{% endblock %}
