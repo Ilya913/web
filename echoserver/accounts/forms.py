@@ -5,6 +5,7 @@ from django.contrib.auth import update_session_auth_hash
 
 
 class RegisterForm(UserCreationForm):
+
     username = forms.CharField(
         label="Логин",
         widget=forms.TextInput(attrs={'class': 'form-control'}),

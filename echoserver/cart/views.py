@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from .models import Cart, CartItem, Order, OrderItem
 from echo.models import Book
 from django.http import HttpResponseRedirect
+from django.urls import reverse
 
 @login_required
 def add_to_cart_view(request, book_id):
@@ -23,7 +24,11 @@ def add_to_cart_view(request, book_id):
     else:
         messages.success(request,"Книга добавлена в корзину")
 
-    return redirect('echo:home')
+    page = request.GET.get('page', '1')
+    per_page = request.GET.get('per_page', '5')  # Значение по умолчанию (если не передано)
+
+    # Перенаправляем обратно с сохранением пагинации
+    return HttpResponseRedirect(f"{reverse('echo:home')}?page={page}&per_page={per_page}")
 
 @login_required
 def remove_from_cart_view(request, item_id):

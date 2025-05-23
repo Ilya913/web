@@ -1,17 +1,13 @@
 <!doctype html>
 <html lang="en">
 <head>
+    {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Главная страница</title>
-    <style>
-        .pagination {
-            text-align: center;
-            margin: 20px 0;
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'echo/css/style.css' %}">
 </head>
 <body>
     {% if messages %}
@@ -25,42 +21,53 @@
         <div style="float: right;">
             Вы вошли как <strong>{{ user.username }}({{ user.role }})</strong><br>
             <a href="{% url 'profile'%}">Профиль</a>
+            <a href="{% url 'cart' %}" id="cart-link">Корзина</a>
             <a href="{% url 'logout' %}">Выйти</a>
-            <a href="{% url 'cart' %}">Корзина</a>
         </div>
     {% else %}
         <div style="float: right;">
-            <a href="{% url 'login' %}">Войти</a>
+            <a href="{% url 'login' %}" id="login-link">Войти</a>
             <a href="{% url 'register' %}">Зарегистрироваться</a>
         </div>
     {% endif %}
 
     <h1>Список книг</h1>
     {% if user.is_authenticated %}
-        <a href="{% url 'echo:add_book' %}">Добавить новую книгу</a>
+        <a href="{% url 'echo:add_book' %}" class="btn">Добавить новую книгу</a>
     {% endif %}
 
-    <form method="get" action="">
-        <label for="per_page">Книг на странице</label>
-        <select name="per_page" id="per_page" onchange="this.form.submit()">
-            <option value="1" {% if books.paginator.per_page == 1 %}selected{% endif %}>1</option>
-            <option value="2" {% if books.paginator.per_page == 2 %}selected{% endif %}>2</option>
-            <option value="3" {% if books.paginator.per_page == 3 %}selected{% endif %}>3</option>
-            <option value="4" {% if books.paginator.per_page == 4 %}selected{% endif %}>4</option>
-            <option value="5" {% if books.paginator.per_page == 5 %}selected{% endif %}>5</option>
-        </select>
-    </form>
-    <ul>
+    <div class="filter-container">
+        <form method="get" action="">
+            <label for="per_page">Книг на странице:</label>
+            <select name="per_page" id="per_page" onchange="this.form.submit()">
+                <option value="1" {% if books.paginator.per_page == 1 %}selected{% endif %}>1</option>
+                <option value="2" {% if books.paginator.per_page == 2 %}selected{% endif %}>2</option>
+                <option value="3" {% if books.paginator.per_page == 3 %}selected{% endif %}>3</option>
+                <option value="4" {% if books.paginator.per_page == 4 %}selected{% endif %}>4</option>
+                <option value="5" {% if books.paginator.per_page == 5 %}selected{% endif %}>5</option>
+            </select>
+        </form>
+
+        <div class="sort-dropdown">
+            <button class="sort-btn">Сортировать</button>
+            <div class="sort-content">
+                <a href="#" onclick="sortBooks('asc')">По возрастанию цены</a>
+                <a href="#" onclick="sortBooks('desc')">По убыванию цены</a>
+            </div>
+        </div>
+    </div>
+
+    <ul id="books-list">
         {% for book in books %}
-            <li>
-                <strong>{{ book.name_book }}</strong> ({{ book.price_book }}) <br>
+            <li data-price="{{ book.price_book }}">
+                <strong>{{ book.name_book }}</strong> {{ book.price_book }} руб <br>
                 <small>{{ book.author_book }}</small> <br>
                 {% if user.is_authenticated and user.is_admin %}
                     <a href="{% url 'echo:edit_book' book.id_book %}">Изменить информацию о книге</a> <br>
-                    <a href="{% url 'echo:delete_book' book.id_book %}">Удалить книгу</a>
+                    <a href="{% url 'echo:delete_book' book.id_book %}">Удалить книгу</a> <br>
                 {% endif %}
                 {% if user.is_authenticated %}
-                    <a href="{% url 'add_to_cart' book.id_book %}">Добавить в корзину</a>
+                    <a href="{% url 'add_to_cart' book.id_book %}?page={{ books.number }}&per_page={{ books.paginator.per_page }}">Добавить в корзину</a>
                 {% endif %}
             </li>
         {% endfor %}
@@ -85,6 +92,7 @@
             {% endif %}
         </span>
     </div>
+    <script src="{% static 'echo/js/filter.js' %}"></script>
 </body>
 </html>
 

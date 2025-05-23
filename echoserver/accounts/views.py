@@ -1,8 +1,12 @@
+from os.path import exists
+
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout
 from django.contrib import messages
 from .forms import RegisterForm, LoginForm, ChangeProfile
-from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from .models import User
 
 def register_view(request):
     if request.method == 'POST':
@@ -34,10 +38,7 @@ def logout_view(request):
 def is_admin(user):
     return user.is_authenticated and user.is_admin()
 
-@login_required
-@user_passes_test(is_admin)
-def admin_view(request):
-    return render(request, 'accounts/admin_panel.html')
+
 
 @login_required
 def profile_view(request):
@@ -52,3 +53,12 @@ def profile_view(request):
 
     return render(request, 'accounts/profile.html', {'form': form})
 
+def check_email(request):
+    email = request.GET.get('email', '')
+    exists = User.objects.filter(email__iexact=email).exists()
+    return JsonResponse({'exists': exists})
+
+def check_username(request):
+    username = request.GET.get('username', '')
+    exists = User.objects.filter(username__iexact=username).exists()
+    return JsonResponse({'exists': exists})
