@@ -82,9 +82,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'book_store',
-        'USER': 'root',
-        'PASSWORD': '22848',
-        'HOST': 'localhost',
+        'USER': 'crutoi1chuvak',
+        'PASSWORD': '36J-qYj-xyZ-eAx',
+        'HOST': 'crutoi1chuvak.mysql.pythonanywhere-services.com',
         'PORT': '3306'
     }
 }
